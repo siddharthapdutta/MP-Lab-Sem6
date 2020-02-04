@@ -1,27 +1,156 @@
-// Multiplication of Two 8 Bit Numbers
-// 2000H - XX; 2001H - YY
 # ORG 2000H
-# DB FF,FF
+# DB 09,06,03,03
+// Example: Multiplying 69 x 33
 
 # ORG 0000H
-// Pulling both numbers in register
+// Performing First Multiplication
 LXI H, 2000H
-MOV B,M
+MOV A,M
+STA 3000H
 INX H
-MOV C,M
+INX H
+MOV A,M
+STA 3001H
+CALL MUL
+LDA 3009H
+CALL SEP
+MOV A,C
+STA 4000H
+MOV A,B
+STA 4001H
+// Performing Second Multiplication
+LXI H, 2001H
+MOV A,M
+STA 3000H
+INX H
+MOV A,M
+STA 3001H
+CALL MUL
+LDA 3009H
+CALL SEP
+MOV A,C
+STA 4002H
+MOV A,B
+STA 4003H
+// Performing Third Multiplication
+LXI H, 2000H
+MOV A,M
+STA 3000H
+INX H
+INX H
+INX H
+MOV A,M
+STA 3001H
+CALL MUL
+LDA 3009H
+CALL SEP
+MOV A,C
+STA 4004H
+MOV A,B
+STA 4005H
+// Performing Fourth Multiplication
+LXI H, 2001H
+MOV A,M
+STA 3000H
+INX H
+INX H
+MOV A,M
+STA 3001H
+CALL MUL
+LDA 3009H
+CALL SEP
+MOV A,C
+STA 4006H
+MOV A,B
+STA 4007H
 
-// Clearing two registers for result
+// Performing First Addition
+LDA 4000H
+STA 5000H
+LDA 4001H
+LXI H, 4002H
+ADD M
+STA 5001H
+MVI A,00H
+ACI 00H
+MOV D,A
+LDA 4003H
+ADD D
+STA 5002H
+
+// Performing Second Addition
+LDA 4004H
+STA 5003H
+LDA 4005H
+LXI H, 4006H
+ADD M
+STA 5004H
+MVI A,00H
+ACI 00H
+MOV D,A
+LDA 4007H
+ADD D
+STA 5005H
+
+// Performing Final Addition
+LDA 5000H
+STA 6000H
+LDA 5001H
+LXI H, 5003H
+ADD M
+CALL SEP
+MOV A,C
+STA 6001H
+LDA 5002H
+LXI H,5004H
+ADD M
+ADD B
+CALL SEP
+MOV A,C
+STA 6002H
+LDA 5005H
+ADD B
+CALL SEP
+MOV A,C
+STA 6003H
+MOV A,B
+STA 6004H
+
+HLT
+
+
+// Separate Nibbles Subroutine
+SEP: MVI B, 00H
+MVI D, 04H
+SLoop: RAL
+MOV C,A
+MOV A,B
+RAL
+MOV B,A
+MOV A,C
+DCR D
+JNZ SLoop
+MVI D, 04H
+STC
+CMC
+MOV A,C
+S2Loop:  RAR
+DCR D
+JNZ S2Loop
+MOV C,A
+RET
+
+
+// Multiplication Subroutine
+MUL: LHLD 3000H
 MVI A, 00H
 MVI D, 00H
-
-Loop: ADD B // Performing Addition
-JNC SKIP // Check for Carry
-INR D // Increment higher byte register
-SKIP: DCR C // Decrement counter register
-JNZ LOOP // Check for zero
-
-STA 3000H // Store lower byte
+MLoop: ADD L
+JNC Skip
+INR D
+Skip: DCR H
+JNZ MLoop
+STA 3009H
 MOV A,D
-STA 3001H // Store higher byte
-HLT
-// Result is stored in 3000H and 3001H
+STA 3010H
+RET
