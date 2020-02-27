@@ -1,6 +1,6 @@
 // Square of a Number using Lookup Table
 # ORG 2001
-# DB 01,04,09,10,19,24,31,40,51,64,79,90,A9, C4
+# DB 01,04,09,10,19,24,31,40,51,64,79,90,A9,C4
 
 // Number is Stored in 3000H
 # ORG 3000
@@ -14,6 +14,5 @@ DAD B
 MOV A,M
 STA 3001H
 HLT
-
 
 // Result is Stored in 3001H
