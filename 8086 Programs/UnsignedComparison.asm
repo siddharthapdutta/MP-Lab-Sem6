@@ -1,4 +1,4 @@
-; Unsigned Comparision
+; Unsigned Comparison
 ASSUME CS:CODE, DS:DATA, ES:EXTRA
 
 DATA SEGMENT
